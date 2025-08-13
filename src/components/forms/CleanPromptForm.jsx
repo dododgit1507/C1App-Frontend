@@ -44,6 +44,7 @@ const CleanPromptForm = ({ onSubmit }) => {
   const [procesandoAudio, setProcesandoAudio] = useState(false);
   const [audioCompleto, setAudioCompleto] = useState('');
   const recognitionRef = useRef(null);
+  const silenceTimeoutRef = useRef(null);
 
   // Model selection
   const [modeloManual, setModeloManual] = useState('');
@@ -212,19 +213,27 @@ const CleanPromptForm = ({ onSubmit }) => {
     if (isListening[field]) {
       recognitionRef.current?.stop();
       setIsListening(prev => ({ ...prev, [field]: false }));
+      // Limpiar timeouts cuando se para manualmente
+      clearTimeout(silenceTimeoutRef.current);
       return;
     }
 
     try {
+      // Configuración más permisiva para descripciones largas
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = 'es-ES';
+      
+      // Configuraciones adicionales para mantener activo más tiempo
+      recognitionRef.current.maxAlternatives = 1;
 
       let finalTranscript = '';
       let interimTranscript = '';
+      let restartTimeout;
 
       recognitionRef.current.onstart = () => {
         setIsListening(prev => ({ ...prev, [field]: true }));
+        console.log('🎤 Reconocimiento de voz iniciado - Habla tranquilo, tienes tiempo...');
       };
 
       recognitionRef.current.onresult = (event) => {
@@ -245,21 +254,97 @@ const CleanPromptForm = ({ onSubmit }) => {
             [field]: finalTranscript + interimTranscript 
           }));
         }
-      };
 
-      recognitionRef.current.onend = () => {
-        setIsListening(prev => ({ ...prev, [field]: false }));
-        if (field === 'principal' && finalTranscript.trim()) {
-          procesarAudioConGPT(finalTranscript);
+        // Reiniciar el timeout de auto-restart para permitir pausas más largas
+        clearTimeout(restartTimeout);
+        
+        // Limpiar timeout de silencio si hay nueva entrada
+        clearTimeout(silenceTimeoutRef.current);
+        
+        // Solo para el campo principal, establecer timeout de silencio de 8 segundos
+        if (field === 'principal' && finalTranscript.length > 0) {
+          silenceTimeoutRef.current = setTimeout(() => {
+            if (isListening[field]) {
+              console.log('⏰ Timeout de silencio alcanzado, procesando audio...');
+              recognitionRef.current?.stop();
+              setIsListening(prev => ({ ...prev, [field]: false }));
+              if (finalTranscript.trim()) {
+                procesarAudioConGPT(finalTranscript);
+              }
+            }
+          }, 8000); // 8 segundos de silencio antes de auto-procesar
         }
       };
 
-      recognitionRef.current.onerror = () => {
-        setIsListening(prev => ({ ...prev, [field]: false }));
+      recognitionRef.current.onend = () => {
+        console.log('🎤 Reconocimiento terminado');
+        
+        // Si estaba escuchando y se detuvo automáticamente, reiniciar
+        if (isListening[field]) {
+          console.log('🔄 Reiniciando reconocimiento automáticamente...');
+          restartTimeout = setTimeout(() => {
+            if (isListening[field]) {
+              try {
+                recognitionRef.current.start();
+              } catch (error) {
+                console.log('Error reiniciando reconocimiento:', error);
+                setIsListening(prev => ({ ...prev, [field]: false }));
+                if (field === 'principal' && finalTranscript.trim()) {
+                  procesarAudioConGPT(finalTranscript);
+                }
+              }
+            }
+          }, 100);
+        } else {
+          // Solo procesar si se detuvo manualmente y hay contenido
+          if (field === 'principal' && finalTranscript.trim()) {
+            procesarAudioConGPT(finalTranscript);
+          }
+        }
+      };
+
+      recognitionRef.current.onerror = (event) => {
+        console.log('Error en reconocimiento:', event.error);
+        
+        // Manejar diferentes tipos de errores
+        if (event.error === 'no-speech') {
+          console.log('No se detectó habla, continuando...');
+          // No parar por falta de habla, continuar escuchando
+          return;
+        }
+        
+        if (event.error === 'audio-capture') {
+          console.log('Error de captura de audio');
+          setIsListening(prev => ({ ...prev, [field]: false }));
+          return;
+        }
+        
+        if (event.error === 'not-allowed') {
+          console.log('Permisos de micrófono denegados');
+          setIsListening(prev => ({ ...prev, [field]: false }));
+          alert('Por favor, permite el acceso al micrófono para usar esta función.');
+          return;
+        }
+
+        // Para otros errores, intentar reiniciar
+        if (isListening[field]) {
+          console.log('Intentando reiniciar por error:', event.error);
+          setTimeout(() => {
+            if (isListening[field]) {
+              try {
+                recognitionRef.current.start();
+              } catch (error) {
+                console.log('Error reiniciando:', error);
+                setIsListening(prev => ({ ...prev, [field]: false }));
+              }
+            }
+          }, 1000);
+        }
       };
 
       recognitionRef.current.start();
     } catch (error) {
+      console.error('Error iniciando reconocimiento:', error);
       setIsListening(prev => ({ ...prev, [field]: false }));
     }
   };
@@ -345,12 +430,23 @@ const CleanPromptForm = ({ onSubmit }) => {
                 >
                   <Mic className="w-4 h-4 mr-2" />
                   {isListening.principal 
-                    ? 'Grabando... (Toca para parar)' 
+                    ? 'Escuchando... (Toca para terminar y procesar)' 
                     : procesandoAudio 
                     ? 'Procesando con IA...' 
                     : 'Describir Idea Completa por Audio'
                   }
                 </Button>
+
+                {isListening.principal && (
+                  <div className="mb-3">
+                    <p className="text-xs sm:text-sm text-green-300 mb-2 p-2 bg-green-900/20 rounded border border-green-500/30">
+                      🎤 Micrófono activo - Describe tu idea completa, puedes hacer pausas
+                    </p>
+                    <p className="text-xs text-slate-400">
+                      💡 Tip: Habla con naturalidad, el sistema se mantendrá activo. Automáticamente procesará tras 8 segundos de silencio o cuando toques "terminar".
+                    </p>
+                  </div>
+                )}
 
                 {audioCompleto && (
                   <div className="mb-4 p-3 bg-slate-700 rounded-lg text-left">
