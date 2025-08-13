@@ -219,17 +219,19 @@ const CleanPromptForm = ({ onSubmit }) => {
     }
 
     try {
+      // Limpiar audio anterior al iniciar nueva grabación
+      if (field === 'principal') {
+        setAudioCompleto('');
+      }
+
       // Configuración más permisiva para descripciones largas
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
       recognitionRef.current.lang = 'es-ES';
-      
-      // Configuraciones adicionales para mantener activo más tiempo
       recognitionRef.current.maxAlternatives = 1;
 
-      let finalTranscript = '';
-      let interimTranscript = '';
-      let restartTimeout;
+      let allFinalTranscript = '';
+      let currentInterimTranscript = '';
 
       recognitionRef.current.onstart = () => {
         setIsListening(prev => ({ ...prev, [field]: true }));
@@ -237,69 +239,60 @@ const CleanPromptForm = ({ onSubmit }) => {
       };
 
       recognitionRef.current.onresult = (event) => {
-        interimTranscript = '';
+        let interimTranscript = '';
+        
+        // Procesar solo los resultados nuevos para evitar duplicación
         for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          
           if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript + ' ';
+            // Solo agregar si no está ya incluido para evitar duplicados
+            if (!allFinalTranscript.includes(transcript.trim())) {
+              allFinalTranscript += transcript + ' ';
+            }
           } else {
-            interimTranscript += event.results[i][0].transcript;
+            interimTranscript += transcript;
           }
         }
 
+        // Actualizar el estado con el texto acumulado
+        currentInterimTranscript = interimTranscript;
+        const fullText = allFinalTranscript + currentInterimTranscript;
+
         if (field === 'principal') {
-          setAudioCompleto(finalTranscript + interimTranscript);
+          setAudioCompleto(fullText);
         } else {
           setFormData(prev => ({ 
             ...prev, 
-            [field]: finalTranscript + interimTranscript 
+            [field]: fullText 
           }));
         }
 
-        // Reiniciar el timeout de auto-restart para permitir pausas más largas
-        clearTimeout(restartTimeout);
-        
         // Limpiar timeout de silencio si hay nueva entrada
         clearTimeout(silenceTimeoutRef.current);
         
-        // Solo para el campo principal, establecer timeout de silencio de 8 segundos
-        if (field === 'principal' && finalTranscript.length > 0) {
+        // Solo para el campo principal, establecer timeout de silencio de 6 segundos
+        if (field === 'principal' && allFinalTranscript.length > 0) {
           silenceTimeoutRef.current = setTimeout(() => {
             if (isListening[field]) {
               console.log('⏰ Timeout de silencio alcanzado, procesando audio...');
               recognitionRef.current?.stop();
               setIsListening(prev => ({ ...prev, [field]: false }));
-              if (finalTranscript.trim()) {
-                procesarAudioConGPT(finalTranscript);
+              if (allFinalTranscript.trim()) {
+                procesarAudioConGPT(allFinalTranscript.trim());
               }
             }
-          }, 8000); // 8 segundos de silencio antes de auto-procesar
+          }, 6000); // Reducido a 6 segundos
         }
       };
 
       recognitionRef.current.onend = () => {
         console.log('🎤 Reconocimiento terminado');
+        setIsListening(prev => ({ ...prev, [field]: false }));
         
-        // Si estaba escuchando y se detuvo automáticamente, reiniciar
-        if (isListening[field]) {
-          console.log('🔄 Reiniciando reconocimiento automáticamente...');
-          restartTimeout = setTimeout(() => {
-            if (isListening[field]) {
-              try {
-                recognitionRef.current.start();
-              } catch (error) {
-                console.log('Error reiniciando reconocimiento:', error);
-                setIsListening(prev => ({ ...prev, [field]: false }));
-                if (field === 'principal' && finalTranscript.trim()) {
-                  procesarAudioConGPT(finalTranscript);
-                }
-              }
-            }
-          }, 100);
-        } else {
-          // Solo procesar si se detuvo manualmente y hay contenido
-          if (field === 'principal' && finalTranscript.trim()) {
-            procesarAudioConGPT(finalTranscript);
-          }
+        // Solo procesar si se detuvo manualmente y hay contenido
+        if (field === 'principal' && allFinalTranscript.trim()) {
+          procesarAudioConGPT(allFinalTranscript.trim());
         }
       };
 
@@ -308,14 +301,14 @@ const CleanPromptForm = ({ onSubmit }) => {
         
         // Manejar diferentes tipos de errores
         if (event.error === 'no-speech') {
-          console.log('No se detectó habla, continuando...');
-          // No parar por falta de habla, continuar escuchando
+          console.log('No se detectó habla, esperando...');
           return;
         }
         
         if (event.error === 'audio-capture') {
           console.log('Error de captura de audio');
           setIsListening(prev => ({ ...prev, [field]: false }));
+          alert('Error de captura de audio. Por favor, verifica tu micrófono.');
           return;
         }
         
@@ -326,20 +319,9 @@ const CleanPromptForm = ({ onSubmit }) => {
           return;
         }
 
-        // Para otros errores, intentar reiniciar
-        if (isListening[field]) {
-          console.log('Intentando reiniciar por error:', event.error);
-          setTimeout(() => {
-            if (isListening[field]) {
-              try {
-                recognitionRef.current.start();
-              } catch (error) {
-                console.log('Error reiniciando:', error);
-                setIsListening(prev => ({ ...prev, [field]: false }));
-              }
-            }
-          }, 1000);
-        }
+        // Para otros errores, parar completamente
+        console.log('Error no recuperable:', event.error);
+        setIsListening(prev => ({ ...prev, [field]: false }));
       };
 
       recognitionRef.current.start();
@@ -440,10 +422,10 @@ const CleanPromptForm = ({ onSubmit }) => {
                 {isListening.principal && (
                   <div className="mb-3">
                     <p className="text-xs sm:text-sm text-green-300 mb-2 p-2 bg-green-900/20 rounded border border-green-500/30">
-                      🎤 Micrófono activo - Describe tu idea completa, puedes hacer pausas
+                      🎤 Micrófono activo - Habla con naturalidad
                     </p>
                     <p className="text-xs text-slate-400">
-                      💡 Tip: Habla con naturalidad, el sistema se mantendrá activo. Automáticamente procesará tras 8 segundos de silencio o cuando toques "terminar".
+                      💡 Tip: Describe tu idea completa, pausas son normales. Se procesará automáticamente tras 6 segundos de silencio.
                     </p>
                   </div>
                 )}
