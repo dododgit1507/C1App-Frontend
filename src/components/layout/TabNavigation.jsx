@@ -1,24 +1,25 @@
 // src/components/layout/TabNavigation.jsx
 import { motion } from 'framer-motion';
+import { Zap, Settings, ClipboardList } from 'lucide-react';
 
 const TabNavigation = ({ currentView, onViewChange, loading }) => {
   const tabs = [
     {
       id: 'formulario',
       label: 'Crear Prompt',
-      icon: '⚡',
+      icon: Zap,
       description: 'Diseña tu consulta'
     },
     {
       id: 'procesando',
       label: 'Procesando',
-      icon: '⚙️',
+      icon: Settings,
       description: 'IA trabajando'
     },
     {
       id: 'resultados',
       label: 'Resultados',
-      icon: '📋',
+      icon: ClipboardList,
       description: 'Tu prompt optimizado'
     }
   ];
@@ -64,8 +65,7 @@ const TabNavigation = ({ currentView, onViewChange, loading }) => {
 
                 {/* Contenido del tab */}
                 <div className="relative z-10 flex items-center gap-1 sm:gap-2">
-                  <motion.span 
-                    className="text-base sm:text-lg"
+                  <motion.div
                     animate={currentView === 'procesando' && tab.id === 'procesando' ? {
                       rotate: [0, 360],
                     } : {}}
@@ -75,8 +75,8 @@ const TabNavigation = ({ currentView, onViewChange, loading }) => {
                       ease: "linear"
                     }}
                   >
-                    {tab.icon}
-                  </motion.span>
+                    <tab.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                  </motion.div>
                   <div className="text-left hidden sm:block">
                     <div className="font-semibold">{tab.label}</div>
                     <div className={`text-xs ${isActive ? 'text-slate-300' : 'text-slate-500'}`}>

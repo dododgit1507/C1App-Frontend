@@ -1,6 +1,7 @@
 // src/components/ui/Textarea.jsx
 import { motion } from 'framer-motion';
 import { forwardRef, useState } from 'react';
+import { Mic, Square, AlertTriangle } from 'lucide-react';
 
 const Textarea = forwardRef(({ 
   label,
@@ -84,7 +85,7 @@ const Textarea = forwardRef(({
               title={isListening ? 'GRABANDO - Haz clic para parar' : 'Haz clic y habla'}
             >
               <span className="text-base">
-                {isListening ? '⏹️' : '⏺️'}
+                {isListening ? <Square className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
               </span>
             </button>
           </motion.div>
@@ -107,7 +108,8 @@ const Textarea = forwardRef(({
             animate={{ opacity: [1, 0.5, 1] }}
             transition={{ duration: 1, repeat: Infinity }}
           >
-            ⏺️ Escuchando...
+            <Mic className="w-4 h-4 mr-2" />
+            Escuchando...
           </motion.div>
         )}
 
@@ -130,7 +132,7 @@ const Textarea = forwardRef(({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          <span>⚠️</span>
+          <AlertTriangle className="w-4 h-4 mr-2" />
           {error}
         </motion.p>
       )}

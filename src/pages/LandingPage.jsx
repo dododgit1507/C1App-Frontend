@@ -1,6 +1,19 @@
 // src/pages/LandingPage.jsx
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { 
+  Brain, 
+  Zap, 
+  Target, 
+  BarChart3, 
+  Rocket, 
+  Trophy, 
+  X, 
+  AlertTriangle, 
+  Lightbulb,
+  CheckCircle,
+  TrendingUp
+} from 'lucide-react';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 
@@ -9,22 +22,22 @@ const LandingPage = () => {
 
   const features = [
     {
-      icon: '🧠',
+      icon: Brain,
       title: 'IA Avanzada',
       description: 'Utiliza 4 agentes especializados trabajando en conjunto para crear prompts optimizados'
     },
     {
-      icon: '⚡',
+      icon: Zap,
       title: 'Proceso Rápido',
       description: 'Obtén prompts optimizados en segundos, no en horas de prueba y error'
     },
     {
-      icon: '🎯',
+      icon: Target,
       title: 'Resultados Precisos',
       description: 'Prompts adaptados específicamente a tu área de negocio y modelo de IA'
     },
     {
-      icon: '📊',
+      icon: BarChart3,
       title: 'Análisis Completo',
       description: 'Recibe evaluaciones detalladas y métricas de efectividad para cada prompt'
     }
@@ -79,7 +92,8 @@ const LandingPage = () => {
               className="mb-8"
             >
               <div className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-green-900/40 to-blue-900/40 rounded-full text-green-300 text-xs sm:text-sm font-semibold mb-4 sm:mb-6 border border-green-800/30">
-                🚀 Ahorra hasta 70% en tokens de IA
+                <Rocket className="w-6 h-6 mr-2 inline text-green-400" />
+                Ahorra hasta 70% en tokens de IA
               </div>
               
               <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 sm:mb-6 leading-tight px-2">
@@ -94,7 +108,8 @@ const LandingPage = () => {
               </h1>
               
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-slate-300 mb-2 sm:mb-3 max-w-4xl mx-auto leading-relaxed font-medium px-4">
-                🎯 <span className="text-white">HannahPrompt</span> convierte tus prompts ineficientes en 
+                <Target className="w-6 h-6 mr-2 inline text-blue-400" />
+                <span className="text-white">HannahPrompt</span> convierte tus prompts ineficientes en 
                 <span className="text-green-400"> máquinas de resultados precisos</span>
               </p>
               
@@ -126,7 +141,8 @@ const LandingPage = () => {
                 onClick={() => document.getElementById('comparison').scrollIntoView({ behavior: 'smooth' })}
                 className="text-base sm:text-lg px-6 sm:px-10 py-3 sm:py-4 border-2 border-yellow-500 text-yellow-400 hover:bg-yellow-500 hover:text-black transition-all duration-300 w-full sm:w-auto"
               >
-                📊 Ver Comparación Real
+                <BarChart3 className="w-5 h-5 mr-2 inline" />
+                Ver Comparación Real
               </Button>
             </motion.div>
 
@@ -185,7 +201,9 @@ const LandingPage = () => {
                 viewport={{ once: true }}
               >
                 <Card hover className="h-full text-center">
-                  <div className="text-4xl mb-4">{feature.icon}</div>
+                  <div className="text-4xl mb-4 flex justify-center">
+                    <feature.icon className="w-12 h-12 text-blue-400" />
+                  </div>
                   <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
                   <p className="text-slate-400 leading-relaxed">{feature.description}</p>
                 </Card>
@@ -206,7 +224,8 @@ const LandingPage = () => {
             className="text-center mb-12 sm:mb-16"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-light text-white mb-4 sm:mb-6">
-              🎯 Comparación Real: Ahorra Tokens y Mejora Resultados
+              <Target className="w-6 h-6 mr-2 inline text-blue-400" />
+              Comparación Real: Ahorra Tokens y Mejora Resultados
             </h2>
             <p className="text-lg sm:text-xl text-slate-400 max-w-3xl mx-auto px-4">
               Mira cómo HannahPrompt transforma prompts ineficientes en herramientas precisas que ahorran hasta 70% en tokens
@@ -224,7 +243,8 @@ const LandingPage = () => {
               <Card className="h-full border-red-900/30 bg-red-950/20">
                 <div className="text-center mb-6">
                   <div className="inline-flex items-center px-4 py-2 bg-red-900/40 rounded-full text-red-300 text-sm font-semibold mb-4">
-                    ❌ SIN HannahPrompt
+                    <X className="w-5 h-5 mr-2 inline text-red-400" />
+                    SIN HannahPrompt
                   </div>
                   <h3 className="text-2xl font-semibold text-white mb-2">Prompt Ineficiente</h3>
                   <p className="text-red-300 text-sm">~250 tokens • Respuesta vaga • Costoso</p>
@@ -238,7 +258,7 @@ const LandingPage = () => {
 
                 <div className="space-y-3">
                   <div className="flex items-center text-red-400 text-sm">
-                    <span className="mr-2">⚠️</span>
+                    <AlertTriangle className="w-5 h-5 mr-2 inline text-yellow-400" />
                     <span>Demasiado vago e impreciso</span>
                   </div>
                   <div className="flex items-center text-red-400 text-sm">
@@ -286,7 +306,7 @@ const LandingPage = () => {
 
                 <div className="space-y-3">
                   <div className="flex items-center text-green-400 text-sm">
-                    <span className="mr-2">🎯</span>
+                    <Target className="w-5 h-5 mr-2 inline text-green-400" />
                     <span><strong>Estructura perfecta:</strong> 6 variables críticas</span>
                   </div>
                   <div className="flex items-center text-green-400 text-sm">
@@ -294,7 +314,7 @@ const LandingPage = () => {
                     <span><strong>73% menos tokens</strong> (68 vs 250 = $18 ahorrados)</span>
                   </div>
                   <div className="flex items-center text-green-400 text-sm">
-                    <span className="mr-2">⚡</span>
+                    <Zap className="w-5 h-5 mr-2 inline text-blue-400" />
                     <span><strong>Resultado inmediato:</strong> 0 iteraciones</span>
                   </div>
                   <div className="flex items-center text-green-400 text-sm">
@@ -326,7 +346,10 @@ const LandingPage = () => {
             viewport={{ once: true }}
             className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 sm:p-8 text-center border border-yellow-600/30"
           >
-            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2">🏆 Casos de Éxito Reales</h3>
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-2 flex items-center justify-center">
+              <Trophy className="w-8 h-8 mr-3 text-yellow-400" />
+              Casos de Éxito Reales
+            </h3>
             <p className="text-yellow-400 text-base sm:text-lg mb-6 sm:mb-8">Empresas que cambiaron prompts malos por HannahPrompt</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
               <div className="bg-slate-900/50 rounded-xl p-3 sm:p-4">
@@ -352,7 +375,10 @@ const LandingPage = () => {
             </div>
             
             <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-gradient-to-r from-green-900/30 to-blue-900/30 rounded-xl border border-green-500/30">
-              <div className="text-base sm:text-lg text-green-300 font-semibold mb-2">💡 Testimonial Impactante:</div>
+              <div className="text-base sm:text-lg text-green-300 font-semibold mb-2 flex items-center">
+                <Lightbulb className="w-5 h-5 mr-2" />
+                Testimonial Impactante:
+              </div>
               <p className="text-slate-200 italic text-sm sm:text-lg">
                 "En 3 meses ahorramos $4,200 en tokens de GPT-4 y nuestros emails tienen 340% más conversión. 
                 <span className="text-yellow-400">HannahPrompt se pagó solo en 2 semanas.</span>"
@@ -471,7 +497,8 @@ const LandingPage = () => {
               onClick={() => navigate('/home')}
               className="text-base sm:text-lg px-8 sm:px-12 py-3 sm:py-4 w-full sm:w-auto"
             >
-              🎯 Empezar Gratis
+              <Target className="w-5 h-5 mr-2 inline" />
+              Empezar Gratis
             </Button>
           </motion.div>
         </div>

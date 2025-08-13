@@ -23,7 +23,7 @@ const HomePage = () => {
   const [vistaActual, setVistaActual] = useState('formulario'); // 'formulario', 'procesando', 'resultados'
 
   const handleFormSubmit = async (formData) => {
-    console.log('📋 Datos recibidos del formulario:', formData);
+    console.log('ClipboardList Datos recibidos del formulario:', formData);
     
     setLoading(true);
     setResultado(null);
@@ -35,7 +35,7 @@ const HomePage = () => {
       // Verificar conexión con el backend primero
       const backendConectado = await apiClient.verificarConexion();
       if (!backendConectado) {
-        throw new Error('❌ No se pudo conectar con el backend. Asegúrate de que esté ejecutándose en http://localhost:3001');
+        throw new Error('X No se pudo conectar con el backend. Asegúrate de que esté ejecutándose en http://localhost:3001');
       }
 
       setProcesoActual('✅ Conectado al backend. Procesando con agentes IA...');
@@ -52,7 +52,7 @@ const HomePage = () => {
         null // modeloInfo ya no se usa
       );
 
-      console.log('🎯 RESULTADO RECIBIDO EN FRONTEND:', resultado);
+      console.log('Target RESULTADO RECIBIDO EN FRONTEND:', resultado);
 
       // Esperar un momento antes de mostrar resultados para que se vea el progreso completo
       await new Promise(resolve => setTimeout(resolve, 500));

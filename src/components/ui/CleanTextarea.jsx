@@ -1,6 +1,7 @@
 // src/components/ui/CleanTextarea.jsx
 import { motion } from 'framer-motion';
 import { forwardRef, useState } from 'react';
+import { Mic, Square } from 'lucide-react';
 
 const CleanTextarea = forwardRef(({ 
   label,
@@ -79,13 +80,11 @@ const CleanTextarea = forwardRef(({
               `}
               title={isListening ? 'Grabando... (Toca para parar)' : 'Grabar audio'}
             >
-              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                {isListening ? (
-                  <rect x="6" y="6" width="12" height="12" rx="1" />
-                ) : (
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
-                )}
-              </svg>
+              {isListening ? (
+                <Square className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" />
+              ) : (
+                <Mic className="w-3 h-3 sm:w-4 sm:h-4" />
+              )}
             </button>
           </motion.div>
         )}

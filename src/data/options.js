@@ -1,11 +1,20 @@
 // src/data/options.js
+import { 
+  TrendingUp, 
+  Code, 
+  GraduationCap, 
+  Heart, 
+  DollarSign, 
+  Palette 
+} from 'lucide-react';
+
 export const especialidades = [
-  { id: 'marketing', name: 'Marketing Digital', icon: '📊' },
-  { id: 'programacion', name: 'Programación', icon: '💻' },
-  { id: 'educacion', name: 'Educación', icon: '📚' },
-  { id: 'medicina', name: 'Medicina', icon: '🏥' },
-  { id: 'finanzas', name: 'Finanzas', icon: '💰' },
-  { id: 'creatividad', name: 'Creatividad', icon: '🎨' },
+  { id: 'marketing', name: 'Marketing Digital', icon: TrendingUp },
+  { id: 'programacion', name: 'Programación', icon: Code },
+  { id: 'educacion', name: 'Educación', icon: GraduationCap },
+  { id: 'medicina', name: 'Medicina', icon: Heart },
+  { id: 'finanzas', name: 'Finanzas', icon: DollarSign },
+  { id: 'creatividad', name: 'Creatividad', icon: Palette },
 ];
 
 export const modelos = [
