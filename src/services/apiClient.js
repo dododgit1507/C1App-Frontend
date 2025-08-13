@@ -1,7 +1,7 @@
 // src/services/apiClient.js
 // Cliente para comunicarse con el backend
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 export const apiClient = {
   // Procesar solicitud completa (4 agentes)
@@ -258,7 +258,7 @@ export const apiClient = {
   // Verificar conexión con el backend
   verificarConexion: async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/health`, {
+      const response = await fetch(`${API_BASE_URL}/health`, {
         method: 'GET',
       });
 
