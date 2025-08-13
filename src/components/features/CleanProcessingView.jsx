@@ -1,38 +1,43 @@
 // src/components/features/CleanProcessingView.jsx
 import { motion } from 'framer-motion';
+import { Settings, Edit, Search, Target, ArrowLeft } from 'lucide-react';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 
 const CleanProcessingView = ({ procesoActual, progreso, onBack }) => {
   // Debug para entender el progreso
   console.log('🔄 PROCESSING VIEW - Progreso recibido:', progreso);
-  console.log('📊 Agentes completados:', progreso.filter(p => p.estado === 'completado').length);
-  console.log('⚡ Agente actual procesando:', progreso.find(p => p.estado === 'procesando')?.fase);
+  console.log('BarChart3 Agentes completados:', progreso.filter(p => p.estado === 'completado').length);
+  console.log('Zap Agente actual procesando:', progreso.find(p => p.estado === 'procesando')?.fase);
   
   const agentes = [
     { 
       id: 'agente1', 
       name: 'Estructurador', 
       desc: 'Analizando estructura',
-      step: '01'
+      step: '01',
+      icon: Settings
     },
     { 
       id: 'agente2', 
       name: 'Prompteador', 
       desc: 'Creando prompt base',
-      step: '02'
+      step: '02',
+      icon: Edit
     },
     { 
       id: 'agente3', 
       name: 'Revisor', 
       desc: 'Revisando y mejorando',
-      step: '03'
+      step: '03',
+      icon: Search
     },
     { 
       id: 'agente4', 
       name: 'Implementador', 
       desc: 'Versión final',
-      step: '04'
+      step: '04',
+      icon: Target
     }
   ];
 
@@ -151,11 +156,13 @@ const CleanProcessingView = ({ procesoActual, progreso, onBack }) => {
                   }
                 `}>
                   {status === 'completed' ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
+                  ) : status === 'processing' ? (
+                    <agente.icon className="w-4 h-4 sm:w-5 sm:h-5" />
                   ) : (
-                    agente.step
+                    <agente.icon className="w-4 h-4 sm:w-5 sm:h-5 opacity-50" />
                   )}
                 </div>
 
@@ -231,9 +238,10 @@ const CleanProcessingView = ({ procesoActual, progreso, onBack }) => {
         <Button 
           variant="ghost" 
           onClick={onBack}
-          className="text-slate-400 hover:text-slate-200"
+          className="text-slate-400 hover:text-slate-200 flex items-center gap-2"
         >
-          ← Volver al formulario
+          <ArrowLeft className="w-4 h-4" />
+          Volver al formulario
         </Button>
       </motion.div>
 

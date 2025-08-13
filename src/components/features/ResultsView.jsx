@@ -1,6 +1,25 @@
 // src/components/features/ResultsView.jsx
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  X, 
+  ArrowLeft, 
+  Trophy, 
+  CheckCircle, 
+  Copy, 
+  Settings,
+  Edit,
+  Search,
+  Target,
+  ClipboardList,
+  Key,
+  BarChart3,
+  Lightbulb,
+  Rocket,
+  Sparkles,
+  ChevronDown,
+  ChevronRight
+} from 'lucide-react';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 
@@ -31,13 +50,13 @@ const ResultsView = ({ resultado, onNewPrompt }) => {
     }
   };
 
-  console.log('🎯 RESULTADO EN RESULTSVIEW:', resultado);
-  console.log('📋 ANÁLISIS COMPLETO ESTRUCTURA:', resultado?.analisisCompleto);
+  console.log('Target RESULTADO EN RESULTSVIEW:', resultado);
+  console.log('ClipboardList ANÁLISIS COMPLETO ESTRUCTURA:', resultado?.analisisCompleto);
   if (resultado?.analisisCompleto) {
-    console.log('🔧 AGENTE 1 DATA:', resultado.analisisCompleto.agente1);
-    console.log('✍️ AGENTE 2 DATA:', resultado.analisisCompleto.agente2);
-    console.log('🔍 AGENTE 3 DATA:', resultado.analisisCompleto.agente3);
-    console.log('🎯 AGENTE 4 DATA:', resultado.analisisCompleto.agente4);
+    console.log('Settings AGENTE 1 DATA:', resultado.analisisCompleto.agente1);
+    console.log('Edit AGENTE 2 DATA:', resultado.analisisCompleto.agente2);
+    console.log('Search AGENTE 3 DATA:', resultado.analisisCompleto.agente3);
+    console.log('Target AGENTE 4 DATA:', resultado.analisisCompleto.agente4);
   }
 
   if (!resultado || !resultado.exito) {
@@ -50,14 +69,15 @@ const ResultsView = ({ resultado, onNewPrompt }) => {
             transition={{ duration: 0.5 }}
           >
             <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">❌</span>
+              <X className="w-8 h-8 text-red-400" />
             </div>
             <h2 className="text-2xl font-bold text-red-400 mb-4">Error en el Procesamiento</h2>
             <p className="text-slate-400 mb-6">
               {resultado?.detalleError || 'Ha ocurrido un error inesperado'}
             </p>
             <Button onClick={onNewPrompt} variant="primary">
-              ← Intentar de nuevo
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Intentar de nuevo
             </Button>
           </motion.div>
         </Card>
@@ -77,11 +97,11 @@ const ResultsView = ({ resultado, onNewPrompt }) => {
       agente4: analisisCompleto?.implementacion   // Agente Implementador
     };
 
-    console.log('🔍 DATOS EXTRAÍDOS DE AGENTES:', agentData);
-    console.log('🔧 AGENTE 1 (estructura):', agentData.agente1);
-    console.log('✍️ AGENTE 2 (promptCreado):', agentData.agente2);
-    console.log('🔍 AGENTE 3 (revision):', agentData.agente3);
-    console.log('🎯 AGENTE 4 (implementacion):', agentData.agente4);
+    console.log('Search DATOS EXTRAÍDOS DE AGENTES:', agentData);
+    console.log('Settings AGENTE 1 (estructura):', agentData.agente1);
+    console.log('Edit AGENTE 2 (promptCreado):', agentData.agente2);
+    console.log('Search AGENTE 3 (revision):', agentData.agente3);
+    console.log('Target AGENTE 4 (implementacion):', agentData.agente4);
     
     return agentData;
   };
@@ -92,297 +112,282 @@ const ResultsView = ({ resultado, onNewPrompt }) => {
   const agentResults = [
     {
       name: 'Agente Estructurador',
-      icon: '🔧',
+      icon: Settings,
       color: 'from-slate-600 to-slate-700',
       data: agentData.agente1,
       sections: [
-        { key: 'estructura_recomendada', title: 'Estructura Recomendada', icon: '📋' },
-        { key: 'elementos_clave', title: 'Elementos Clave', icon: '🔑' },
-        { key: 'complejidad', title: 'Complejidad', icon: '📊' },
-        { key: 'analisis', title: 'Análisis', icon: '🔍' }
+        { key: 'estructura_recomendada', title: 'Estructura Recomendada', icon: ClipboardList },
+        { key: 'elementos_clave', title: 'Elementos Clave', icon: Key },
+        { key: 'complejidad', title: 'Complejidad', icon: BarChart3 },
+        { key: 'analisis', title: 'Análisis', icon: Search }
       ]
     },
     {
       name: 'Agente Prompteador',
-      icon: '✍️',
+      icon: Edit,
       color: 'from-slate-700 to-slate-800',
       data: agentData.agente2,
       sections: [
-        { key: 'prompt_optimizado', title: 'Prompt Optimizado', icon: '💎' },
-        { key: 'efectividad_estimada', title: 'Efectividad Estimada', icon: '⭐' },
-        { key: 'tokens_estimados', title: 'Tokens Estimados', icon: '�' }
+        { key: 'prompt_optimizado', title: 'Prompt Optimizado', icon: Sparkles },
+        { key: 'efectividad_estimada', title: 'Efectividad Estimada', icon: Trophy },
+        { key: 'tokens_estimados', title: 'Tokens Estimados', icon: BarChart3 }
       ]
     },
     {
       name: 'Agente Revisor',
-      icon: '🔍',
+      icon: Search,
       color: 'from-slate-600 to-slate-700',
       data: agentData.agente3,
       sections: [
-        { key: 'puntuacion_total', title: 'Puntuación Total', icon: '📈' },
-        { key: 'evaluacion', title: 'Evaluación', icon: '📊' },
-        { key: 'mejoras_aplicadas', title: 'Mejoras Aplicadas', icon: '🚀' },
-        { key: 'mejoras_sugeridas', title: 'Mejoras Sugeridas', icon: '�' }
+        { key: 'puntuacion_total', title: 'Puntuación Total', icon: Trophy },
+        { key: 'evaluacion', title: 'Evaluación', icon: BarChart3 },
+        { key: 'mejoras_aplicadas', title: 'Mejoras Aplicadas', icon: Rocket },
+        { key: 'mejoras_sugeridas', title: 'Mejoras Sugeridas', icon: Lightbulb }
       ]
     },
     {
       name: 'Agente Implementador - RESULTADO FINAL',
-      icon: '🎯',
+      icon: Target,
       color: 'from-slate-700 to-slate-800',
       data: agentData.agente4,
       finalPrompt: resultado.promptFinal,
       sections: [
-        { key: 'prompt_final', title: 'Prompt Final Optimizado', icon: '🏆' },
-        { key: 'puntuacion_final', title: 'Puntuación Final', icon: '⭐' },
-        { key: 'mejoras_implementadas', title: 'Mejoras Implementadas', icon: '⚡' }
+        { key: 'prompt_final', title: 'Prompt Final Optimizado', icon: Trophy },
+        { key: 'puntuacion_final', title: 'Puntuación Final', icon: Trophy },
+        { key: 'mejoras_implementadas', title: 'Mejoras Implementadas', icon: Sparkles }
       ]
     }
   ];
 
-  return (
-    <div className="max-w-6xl mx-auto space-y-6 sm:space-y-8 px-2 sm:px-0">
-      
-      {/* Header */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-4 sm:mb-6">
-          <motion.div
-            className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-r from-slate-700 to-slate-800 rounded-2xl flex items-center justify-center"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 300, delay: 0.2 }}
-          >
-            <span className="text-xl sm:text-3xl">🎉</span>
-          </motion.div>
-          <div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white">¡Prompt Optimizado!</h2>
-            <p className="text-xs sm:text-sm text-slate-400">Tu prompt ha sido procesado por nuestros 4 agentes especializados</p>
+  const renderSectionContent = (content, icon) => {
+    if (!content) return <div className="text-slate-400">No disponible</div>;
+    
+    if (typeof content === 'string') {
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-2">
+            {icon && <icon className="w-4 h-4 text-slate-400" />}
           </div>
+          <p className="text-slate-300 leading-relaxed">{content}</p>
         </div>
-        
-        <Button onClick={onNewPrompt} variant="outline" size="lg" className="w-full sm:w-auto">
-          ← Crear nuevo prompt
-        </Button>
-      </motion.div>
-
-      {/* Quick Actions */}
-      <motion.div
-        ref={promptFinalRef}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-      >
-        <Card className="bg-slate-800 border-slate-700">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="text-center sm:text-left">
-              <h3 className="text-lg font-semibold text-white">🏆 Prompt Final Listo</h3>
-              <p className="text-slate-400">Copia el prompt optimizado y úsalo directamente</p>
-            </div>
-            <div className="flex gap-3">
-              <Button
-                onClick={() => copyToClipboard(resultado.promptFinal || '', 'final')}
-                variant={copiedIndex === 'final' ? 'success' : 'primary'}
-                icon={copiedIndex === 'final' ? '✅' : '📋'}
-              >
-                {copiedIndex === 'final' ? 'Copiado!' : 'Copiar Prompt'}
-              </Button>
-              <Button
-                onClick={() => setExpandedSection(expandedSection === 'final' ? null : 'final')}
-                variant="outline"
-                icon={expandedSection === 'final' ? '�' : '🔽'}
-              >
-                {expandedSection === 'final' ? 'Ocultar' : 'Ocultar'}
-              </Button>
-            </div>
+      );
+    }
+    
+    if (typeof content === 'object') {
+      return (
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 mb-2">
+            {icon && <icon className="w-4 h-4 text-slate-400" />}
           </div>
-          
-          {/* Prompt Final siempre visible */}
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            transition={{ duration: 0.3 }}
-            className="mt-4 p-4 bg-slate-900 rounded-lg border border-slate-600"
-          >
-            <pre className="whitespace-pre-wrap text-sm text-slate-300 font-mono">
+          <pre className="text-slate-300 whitespace-pre-wrap leading-relaxed text-sm">
+            {JSON.stringify(content, null, 2)}
+          </pre>
+        </div>
+      );
+    }
+    
+    return <div className="text-slate-400">Formato no soportado</div>;
+  };
+
+  const ActionButton = ({ onClick, icon: IconComponent, label, variant = 'secondary' }) => (
+    <Button onClick={onClick} variant={variant} className="flex items-center gap-2">
+      <IconComponent className="w-4 h-4" />
+      {label}
+    </Button>
+  );
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Header de éxito */}
+      <Card className="text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="w-16 h-16 bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Sparkles className="w-8 h-8 text-green-400" />
+          </div>
+          <h2 className="text-3xl font-bold text-green-400 mb-4">¡Optimización Completada!</h2>
+          <p className="text-slate-400 mb-6">
+            Tu prompt ha sido analizado y optimizado por nuestros 4 agentes especializados
+          </p>
+          <Button onClick={onNewPrompt} variant="secondary">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Crear nuevo prompt
+          </Button>
+        </motion.div>
+      </Card>
+
+      {/* Prompt Final Destacado */}
+      {resultado.promptFinal && (
+        <Card className="bg-gradient-to-r from-green-900/20 to-blue-900/20 border-green-500/30" ref={promptFinalRef}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                <Trophy className="w-4 h-4 text-white" />
+              </div>
+              <h3 className="text-lg font-semibold text-white">
+                <Trophy className="w-5 h-5 mr-2 inline" />
+                Prompt Final Listo
+              </h3>
+            </div>
+            <ActionButton
+              onClick={() => copyToClipboard(resultado.promptFinal, 'final')}
+              icon={copiedIndex === 'final' ? CheckCircle : Copy}
+              label={copiedIndex === 'final' ? 'Copiado!' : 'Copiar'}
+              variant="primary"
+            />
+          </div>
+          <div className="bg-slate-800/50 rounded-lg p-4">
+            <p className="text-slate-200 leading-relaxed whitespace-pre-wrap">
               {resultado.promptFinal}
-            </pre>
-          </motion.div>
+            </p>
+          </div>
         </Card>
-      </motion.div>
+      )}
 
-      {/* Results by Agent */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {agentResults.map((agent, agentIndex) => (
-          <motion.div
-            key={agent.name}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 + agentIndex * 0.1 }}
-          >
-            <Card hover>
-              {/* Agent Header */}
+      {/* Resultados por Agente */}
+      <div className="space-y-4">
+        {agentResults.map((agent, agentIndex) => {
+          if (!agent.data && !agent.finalPrompt) {
+            return null; // No mostrar agentes sin datos
+          }
+
+          const AgentIcon = agent.icon;
+
+          return (
+            <Card key={agentIndex} className={`bg-gradient-to-r ${agent.color}`}>
               <div className="flex items-center gap-3 mb-4">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${agent.color} flex items-center justify-center text-white text-xl`}>
-                  {agent.icon}
+                <div className="w-8 h-8 bg-white/10 rounded-full flex items-center justify-center">
+                  <AgentIcon className="w-4 h-4 text-white" />
                 </div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">{agent.name}</h3>
-                  <p className="text-sm text-slate-400">Análisis completado</p>
-                </div>
+                <h3 className="text-lg font-semibold text-white">{agent.name}</h3>
               </div>
 
-              {/* Agent Results */}
-              <div className="space-y-4">
-                {agent.sections.map((section, sectionIndex) => {
-                  const sectionId = `${agentIndex}-${sectionIndex}`;
-                  const isExpanded = expandedSection === sectionId;
-                  
-                  // Manejo especial para el prompt final del agente 4
-                  let content;
-                  if (agent.name.includes('Implementador') && section.key === 'prompt_final') {
-                    content = agent.finalPrompt; // Usar el prompt final completo
-                  } else {
-                    content = agent.data?.[section.key];
-                  }
-                  
-                  if (!content) return null;
-
-                  return (
-                    <div key={section.key} className="border-l-4 border-slate-600 pl-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-lg">{section.icon}</span>
-                          <h4 className="font-semibold text-white">{section.title}</h4>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => copyToClipboard(
-                              typeof content === 'object' ? JSON.stringify(content, null, 2) : content,
-                              sectionId
-                            )}
-                            icon={copiedIndex === sectionId ? '✅' : '📋'}
-                          >
-                            {copiedIndex === sectionId ? 'Copiado' : 'Copiar'}
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => setExpandedSection(isExpanded ? null : sectionId)}
-                            icon={isExpanded ? '🔼' : '🔽'}
-                          >
-                            {isExpanded ? 'Menos' : 'Más'}
-                          </Button>
-                        </div>
-                      </div>
-                      
-                      <div className={`text-sm text-slate-300 ${!isExpanded ? 'line-clamp-3' : ''}`}>
-                        {typeof content === 'object' ? (
-                          <div className="space-y-2">
-                            {Array.isArray(content) ? (
-                              <ul className="list-disc list-inside space-y-1">
-                                {content.map((item, i) => (
-                                  <li key={i}>{item}</li>
-                                ))}
-                              </ul>
-                            ) : (
-                              Object.entries(content).map(([key, value]) => (
-                                <div key={key}>
-                                  <span className="font-medium text-white">{key}:</span>{' '}
-                                  {typeof value === 'object' ? (
-                                    Array.isArray(value) ? (
-                                      <ul className="list-disc list-inside ml-4 mt-1">
-                                        {value.map((item, idx) => (
-                                          <li key={idx}>{typeof item === 'object' ? JSON.stringify(item, null, 2) : item}</li>
-                                        ))}
-                                      </ul>
-                                    ) : (
-                                      <pre className="text-xs bg-slate-800 border border-slate-600 text-slate-300 p-3 rounded-lg mt-1 overflow-x-auto font-mono">
-                                        {JSON.stringify(value, null, 2)}
-                                      </pre>
-                                    )
-                                  ) : (
-                                    value
-                                  )}
-                                </div>
-                              ))
-                            )}
-                          </div>
-                        ) : (
-                          // Manejo especial para el prompt final - mostrar en un contenedor especial
-                          agent.name.includes('Implementador') && section.key === 'prompt_final' ? (
-                            <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-lg p-4 border-2 border-slate-600">
-                              <div className="text-xs text-slate-300 font-medium mb-2">🏆 PROMPT FINAL OPTIMIZADO</div>
-                              <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200">{content}</pre>
-                            </div>
-                          ) : (
-                            <p className="leading-relaxed">{content}</p>
-                          )
-                        )}
-                      </div>
+              {/* Renderizar prompt final si existe */}
+              {agent.finalPrompt && (
+                <div className="mb-4 p-4 bg-black/20 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="w-4 h-4 text-yellow-400" />
+                      <span className="text-sm font-medium text-yellow-200">PROMPT FINAL OPTIMIZADO</span>
                     </div>
-                  );
-                })}
-              </div>
+                    <ActionButton
+                      onClick={() => copyToClipboard(agent.finalPrompt, `agent-${agentIndex}-final`)}
+                      icon={copiedIndex === `agent-${agentIndex}-final` ? CheckCircle : Copy}
+                      label={copiedIndex === `agent-${agentIndex}-final` ? 'Copiado!' : 'Copiar'}
+                    />
+                  </div>
+                  <p className="text-slate-200 leading-relaxed whitespace-pre-wrap">
+                    {agent.finalPrompt}
+                  </p>
+                </div>
+              )}
+
+              {/* Secciones del agente */}
+              {agent.sections && agent.sections.length > 0 && (
+                <div className="space-y-3">
+                  {agent.sections.map((section, sectionIndex) => {
+                    const sectionId = `${agentIndex}-${sectionIndex}`;
+                    const isExpanded = expandedSection === sectionId;
+                    const sectionData = agent.data?.[section.key];
+                    
+                    if (!sectionData) return null;
+
+                    const SectionIcon = section.icon;
+
+                    return (
+                      <div key={sectionIndex} className="bg-white/5 rounded-lg overflow-hidden">
+                        <button
+                          onClick={() => setExpandedSection(isExpanded ? null : sectionId)}
+                          className="w-full p-3 text-left flex items-center justify-between hover:bg-white/5 transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <SectionIcon className="w-4 h-4 text-slate-300" />
+                            <span className="text-white font-medium">{section.title}</span>
+                          </div>
+                          {isExpanded ? 
+                            <ChevronDown className="w-4 h-4 text-slate-300" /> : 
+                            <ChevronRight className="w-4 h-4 text-slate-300" />
+                          }
+                        </button>
+                        
+                        <AnimatePresence>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="p-4 border-t border-white/10">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm text-slate-400">Contenido:</span>
+                                  <ActionButton
+                                    onClick={() => copyToClipboard(
+                                      typeof sectionData === 'string' ? sectionData : JSON.stringify(sectionData, null, 2), 
+                                      sectionId
+                                    )}
+                                    icon={copiedIndex === sectionId ? CheckCircle : Copy}
+                                    label={copiedIndex === sectionId ? 'Copiado!' : 'Copiar'}
+                                  />
+                                </div>
+                                {renderSectionContent(sectionData, SectionIcon)}
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </Card>
-          </motion.div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* Summary Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 1 }}
-      >
-        <Card className="bg-slate-800 border-slate-700">
-          <h3 className="text-lg font-bold text-white mb-4 text-center">
-            📊 Resumen del Procesamiento
+      {/* Resumen Final */}
+      <Card className="text-center">
+        <h3 className="text-xl font-bold mb-4 flex items-center justify-center gap-2">
+          <BarChart3 className="w-5 h-5" />
+          Resumen del Procesamiento
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {agentResults.map((agent, index) => {
+            const AgentIcon = agent.icon;
+            return (
+              <div key={index} className="p-4 bg-slate-800/50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <AgentIcon className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm text-slate-300">{agent.name.split(' ')[1]}</span>
+                </div>
+                <div className="text-2xl font-bold text-green-400">
+                  {agent.data ? <CheckCircle className="w-6 h-6 mx-auto" /> : <X className="w-6 h-6 mx-auto text-red-400" />}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        
+        <div className="bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-lg p-6 border border-green-500/30">
+          <h3 className="text-xl font-bold mb-2 flex items-center justify-center gap-2">
+            <Rocket className="w-5 h-5" />
+            ¿Te gustó el resultado?
           </h3>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            <div>
-              <div className="text-2xl font-bold text-slate-300">4</div>
-              <div className="text-sm text-slate-400">Agentes IA Utilizados</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-slate-300">
-                {resultado.resumen?.puntuacion_final || resultado.analisisCompleto?.agente4?.puntuacion_final || 'N/A'}
-              </div>
-              <div className="text-sm text-slate-400">Puntuación Final</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-slate-300">
-                {resultado.promptFinal?.length || 0}
-              </div>
-              <div className="text-sm text-slate-400">Caracteres en Prompt</div>
-            </div>
-          </div>
-        </Card>
-      </motion.div>
-
-      {/* Call to Action */}
-      <motion.div
-        className="text-center"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 1.2 }}
-      >
-        <Card className="bg-slate-800 border-slate-700 text-white">
-          <h3 className="text-xl font-bold mb-2">🚀 ¿Te gustó el resultado?</h3>
-          <p className="text-slate-300 mb-4">
-            Crea otro prompt optimizado para diferentes objetivos empresariales
+          <p className="text-slate-400 mb-4">
+            Comparte tu experiencia o crea un nuevo prompt optimizado
           </p>
-          <Button onClick={onNewPrompt} variant="secondary" size="lg">
-            Crear Otro Prompt
-          </Button>
-        </Card>
-      </motion.div>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={onNewPrompt} variant="primary">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Crear Nuevo Prompt
+            </Button>
+          </div>
+        </div>
+      </Card>
     </div>
   );
 };
