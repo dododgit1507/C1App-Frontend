@@ -31,14 +31,8 @@ const CleanPromptForm = ({ onSubmit }) => {
     reto: ''
   });
 
-  // Auto-analysis state
-  const [analizandoTexto, setAnalizandoTexto] = useState(false);
-  const [textoCompleto, setTextoCompleto] = useState('');
-  const [sugerenciasAutomaticas, setSugerenciasAutomaticas] = useState({
-    areaNegocio: '',
-    objetivo: '',
-    reto: ''
-  });
+  // Auto-analysis state (para mostrar sugerencias después del audio)
+  const [sugerenciasAutomaticas, setSugerenciasAutomaticas] = useState(null);
 
   // Voice recognition state
   const [voiceSupported, setVoiceSupported] = useState(false);
@@ -102,44 +96,8 @@ const CleanPromptForm = ({ onSubmit }) => {
       if (!areasValidas.includes(resultado.areaNegocio)) {
         resultado.areaNegocio = 'marketing';
       }
-      setFormData(resultado);
-      setAudioCompleto('');
-    } catch (error) {
-      console.error('Error procesando audio:', error);
-    } finally {
-      setProcesandoAudio(false);
-    }
-  };
-
-  // Smart text analysis function
-  const analizarTextoInteligente = async (texto) => {
-    if (!texto || texto.trim().length < 10) {
-      alert('Por favor, escribe al menos 10 caracteres para poder analizar tu idea.');
-      return;
-    }
-    
-    setAnalizandoTexto(true);
-    try {
-      // Análisis local por palabras clave
-      const analisisLocal = analizarTextoLocal(texto);
       
-      // Intentar análisis con IA como backup
-      let analisisIA = null;
-      try {
-        analisisIA = await apiClient.interpretarVoz(texto);
-      } catch (error) {
-        console.log('Usando análisis local como fallback');
-      }
-      
-      // Combinar resultados (priorizar IA si está disponible)
-      const resultado = analisisIA || analisisLocal;
-      
-      // Validar área de negocio
-      const areasValidas = ['marketing', 'programacion', 'finanzas', 'recursos-humanos', 'atencion-cliente', 'educacion', 'salud', 'creatividad'];
-      if (!areasValidas.includes(resultado.areaNegocio)) {
-        resultado.areaNegocio = analisisLocal.areaNegocio;
-      }
-      
+      // Activar sugerencias automáticas y rellenar formulario
       setSugerenciasAutomaticas(resultado);
       setFormData(prev => ({
         ...prev,
@@ -148,13 +106,11 @@ const CleanPromptForm = ({ onSubmit }) => {
         reto: resultado.reto
       }));
       
-      // Mostrar notificación de éxito
-      console.log('✅ Análisis completado. Los campos se han rellenado automáticamente.');
-      
+      console.log('✅ Análisis por audio completado. Campos seleccionados automáticamente.');
     } catch (error) {
-      console.error('Error analizando texto:', error);
-      // Fallback al análisis local
-      const analisisLocal = analizarTextoLocal(texto);
+      console.error('Error procesando audio:', error);
+      // Fallback al análisis local si falla la IA
+      const analisisLocal = analizarTextoLocal(textoCompleto);
       setSugerenciasAutomaticas(analisisLocal);
       setFormData(prev => ({
         ...prev,
@@ -162,13 +118,13 @@ const CleanPromptForm = ({ onSubmit }) => {
         objetivo: analisisLocal.objetivo,
         reto: analisisLocal.reto
       }));
-      console.log('⚠️ Usando análisis básico. Los campos se han rellenado automáticamente.');
+      console.log('⚠️ Usando análisis local por audio. Campos seleccionados automáticamente.');
     } finally {
-      setAnalizandoTexto(false);
+      setProcesandoAudio(false);
     }
   };
 
-  // Local text analysis using keywords
+  // Local text analysis using keywords (usado como fallback para audio)
   const analizarTextoLocal = (texto) => {
     const textoLower = texto.toLowerCase();
     
@@ -363,117 +319,78 @@ const CleanPromptForm = ({ onSubmit }) => {
 
       <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
         
-        {/* Smart Text Analysis */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <Card variant="subtle" className="max-w-2xl mx-auto">
-            <div className="text-center">
-              <h3 className="text-base sm:text-lg font-medium text-white mb-4">
-                Descripción Inteligente
-              </h3>
-              <p className="text-xs sm:text-sm text-slate-300 mb-4">
-                Describe tu idea y el sistema elegirá automáticamente el área, objetivo y reto
-              </p>
-              
-              <CleanTextarea
-                value={textoCompleto}
-                onChange={(value) => setTextoCompleto(value)}
-                placeholder="Describe tu idea completa aquí... Ejemplo: 'Necesito crear una campaña de marketing para aumentar las ventas de mi producto pero tengo poco presupuesto'"
-                rows={4}
-                maxLength={1000}
-                className="mb-4"
-              />
-              
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  onClick={() => analizarTextoInteligente(textoCompleto)}
-                  loading={analizandoTexto}
-                  variant="primary"
-                  size="lg"
-                  className="flex-1 text-sm sm:text-base"
-                  disabled={!textoCompleto || textoCompleto.trim().length < 10}
-                >
-                  {analizandoTexto 
-                    ? 'Analizando...' 
-                    : 'Describir Idea Completa'
-                  }
-                </Button>
-                
-                {sugerenciasAutomaticas && (
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setSugerenciasAutomaticas(null);
-                      setTextoCompleto('');
-                      setFormData(prev => ({
-                        ...prev,
-                        areaNegocio: '',
-                        objetivo: '',
-                        reto: ''
-                      }));
-                    }}
-                    variant="secondary"
-                    size="lg"
-                    className="text-sm sm:text-base"
-                  >
-                    Limpiar
-                  </Button>
-                )}
-              </div>
-              
-              {sugerenciasAutomaticas && (
-                <div className="mt-4 p-4 bg-slate-700 rounded-lg border border-green-500/30 text-left">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <p className="text-xs sm:text-sm text-green-300 font-medium">Análisis completado - Campos rellenados automáticamente</p>
-                  </div>
-                  <div className="space-y-1 text-xs sm:text-sm">
-                    <p><span className="text-slate-400">Área:</span> <span className="text-white font-medium">{areasNegocio.find(a => a.id === sugerenciasAutomaticas.areaNegocio)?.nombre || sugerenciasAutomaticas.areaNegocio}</span></p>
-                    <p><span className="text-slate-400">Objetivo:</span> <span className="text-white font-medium">{sugerenciasAutomaticas.objetivo}</span></p>
-                    <p><span className="text-slate-400">Reto:</span> <span className="text-white font-medium">{sugerenciasAutomaticas.reto}</span></p>
-                  </div>
-                  <p className="text-xs text-slate-400 mt-2">Puedes modificar cualquier campo manualmente si lo necesitas</p>
-                </div>
-              )}
-            </div>
-          </Card>
-        </motion.div>
-
-        {/* Voice Input Principal */}
+        {/* Descripción Inteligente por Audio */}
         {voiceSupported && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center"
           >
-            <Card variant="subtle" className="max-w-md mx-auto">
+            <Card variant="subtle" className="max-w-2xl mx-auto">
               <div className="text-center">
                 <h3 className="text-base sm:text-lg font-medium text-white mb-4">
-                  Entrada por Voz (Alternativa)
+                  Descripción Inteligente
                 </h3>
+                <p className="text-xs sm:text-sm text-slate-300 mb-4">
+                  Describe tu idea por audio y el sistema seleccionará automáticamente el área, objetivo y desafío
+                </p>
+                
                 <Button
                   type="button"
                   onClick={() => toggleVoiceRecognition('principal')}
                   loading={procesandoAudio}
-                  variant={isListening.principal ? 'danger' : 'secondary'}
+                  variant={isListening.principal ? 'danger' : 'primary'}
                   size="lg"
-                  className="w-full text-sm sm:text-base"
+                  className="w-full text-sm sm:text-base mb-4"
                 >
+                  <Mic className="w-4 h-4 mr-2" />
                   {isListening.principal 
                     ? 'Grabando... (Toca para parar)' 
                     : procesandoAudio 
-                    ? 'Procesando...' 
-                    : 'Usar Voz en su lugar'
+                    ? 'Procesando con IA...' 
+                    : 'Describir Idea Completa por Audio'
                   }
                 </Button>
+
                 {audioCompleto && (
-                  <p className="text-xs sm:text-sm text-slate-300 mt-3 p-3 bg-slate-700 rounded-lg">
-                    "{audioCompleto}"
-                  </p>
+                  <div className="mb-4 p-3 bg-slate-700 rounded-lg text-left">
+                    <p className="text-xs sm:text-sm text-slate-300 mb-1">Audio transcrito:</p>
+                    <p className="text-xs sm:text-sm text-white">"{audioCompleto}"</p>
+                  </div>
+                )}
+                
+                {sugerenciasAutomaticas && (
+                  <div className="p-4 bg-slate-700 rounded-lg border border-green-500/30 text-left">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <p className="text-xs sm:text-sm text-green-300 font-medium">Análisis completado - Campos seleccionados automáticamente</p>
+                    </div>
+                    <div className="space-y-1 text-xs sm:text-sm">
+                      <p><span className="text-slate-400">Área:</span> <span className="text-white font-medium">{areasNegocio.find(a => a.id === sugerenciasAutomaticas.areaNegocio)?.nombre || sugerenciasAutomaticas.areaNegocio}</span></p>
+                      <p><span className="text-slate-400">Objetivo:</span> <span className="text-white font-medium">{sugerenciasAutomaticas.objetivo}</span></p>
+                      <p><span className="text-slate-400">Desafío:</span> <span className="text-white font-medium">{sugerenciasAutomaticas.reto}</span></p>
+                    </div>
+                    <div className="flex gap-2 mt-3">
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          setSugerenciasAutomaticas(null);
+                          setAudioCompleto('');
+                          setFormData(prev => ({
+                            ...prev,
+                            areaNegocio: '',
+                            objetivo: '',
+                            reto: ''
+                          }));
+                        }}
+                        variant="secondary"
+                        size="sm"
+                        className="text-xs"
+                      >
+                        Limpiar y repetir
+                      </Button>
+                    </div>
+                  </div>
                 )}
               </div>
             </Card>
